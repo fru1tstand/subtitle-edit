@@ -9,7 +9,16 @@ const val NEWLINE = "\\N"
 const val FONT_WRAPPER_BEFORE = "{\\fs20}"
 const val FONT_WRAPPER_AFTER = "{\\fs}"
 
+/** Monolith for the FirstLineSmaller tool. */
 object FirstLineSmaller {
+  /**
+   * Console application that adds a smaller font style to the first line of a multi-line subtitle. This method is
+   * self-contained to accept input via CLI.
+   *
+   * Ignores lines that...
+   *  - Are empty or single-line
+   *  - Already have a style (even if it's not a font size style)
+   */
   fun run() {
     println("File path?")
     val file = File(readLine() ?: return)
@@ -38,7 +47,9 @@ object FirstLineSmaller {
     var convertedLines = 0
     var nonConvertedLines = 0
     for (lineNumber in 0 until fileContents.size) {
-      println("[$lineNumber/${fileContents.size}] Non Dialogue: $nonDialogueLines; Converted: $convertedLines; NonConverted: $nonConvertedLines")
+      println(
+        "[$lineNumber/${fileContents.size}] Non Dialogue: $nonDialogueLines; " +
+            "Converted: $convertedLines; NonConverted: $nonConvertedLines")
 
       val line = fileContents[lineNumber]
       val matcher = DIALOGUE_REGEX.matchEntire(line)
