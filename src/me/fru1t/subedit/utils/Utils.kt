@@ -18,7 +18,7 @@ object Utils {
     if (!file.exists()) {
       println("Didn't find file... Try again?")
       if (askYes()) {
-        FirstLineSmaller.run()
+        return askForFile()
       }
       return null
     }

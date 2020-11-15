@@ -19,6 +19,8 @@ object FirstLineSmaller {
    *  - Already have a style (even if it's not a font size style)
    */
   fun run() {
+    println("RUNNING: First line smaller")
+
     val file = Utils.askForFile() ?: return
     val fileContents = ArrayList(Utils.scanFile(file))
 
