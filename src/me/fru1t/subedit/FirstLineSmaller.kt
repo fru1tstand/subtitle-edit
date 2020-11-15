@@ -1,16 +1,15 @@
 package me.fru1t.subedit
 
-import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
+import me.fru1t.subedit.utils.Utils
 
-val DIALOGUE_REGEX = Regex("^(Dialogue: [^,]+,[^,]+,[^,]+,[^,]+,[^,]*,\\d+,\\d+,\\d+,[^,]*,)(.*)\$")
-const val NEWLINE = "\\N"
-const val FONT_WRAPPER_BEFORE = "{\\fs20}"
-const val FONT_WRAPPER_AFTER = "{\\fs}"
 
 /** Monolith for the FirstLineSmaller tool. */
 object FirstLineSmaller {
+  private val DIALOGUE_REGEX = Regex("^(Dialogue: [^,]+,[^,]+,[^,]+,[^,]+,[^,]*,\\d+,\\d+,\\d+,[^,]*,)(.*)\$")
+  private const val NEWLINE = "\\N"
+  private const val FONT_WRAPPER_BEFORE = "{\\fs20}"
+  private const val FONT_WRAPPER_AFTER = "{\\fs}"
+
   /**
    * Console application that adds a smaller font style to the first line of a multi-line subtitle. This method is
    * self-contained to accept input via CLI.
@@ -20,38 +19,18 @@ object FirstLineSmaller {
    *  - Already have a style (even if it's not a font size style)
    */
   fun run() {
-    println("File path?")
-    val file = File(readLine() ?: return)
-
-    if (!file.exists()) {
-      println("Didn't find file... Try again?")
-      if (askYes()) {
-        run()
-      }
-      return
-    }
-
-    if (!file.canWrite() || !file.canRead()) {
-      println("Looks like it's protected from here, sorry")
-      return
-    }
-
-    val fileContents: ArrayList<String> = ArrayList()
-    val fileScanner = Scanner(file)
-    while (fileScanner.hasNextLine()) {
-      fileContents.add(fileScanner.nextLine())
-    }
-    fileScanner.close()
+    val file = Utils.askForFile() ?: return
+    val fileContents = ArrayList(Utils.scanFile(file))
 
     var nonDialogueLines = 0
     var convertedLines = 0
     var nonConvertedLines = 0
-    for (lineNumber in 0 until fileContents.size) {
+    for (lineNumber in fileContents.indices) {
+      val line = fileContents[lineNumber]
       println(
         "[$lineNumber/${fileContents.size}] Non Dialogue: $nonDialogueLines; " +
-            "Converted: $convertedLines; NonConverted: $nonConvertedLines")
+            "Converted: $convertedLines; NonConverted: $nonConvertedLines; - $line")
 
-      val line = fileContents[lineNumber]
       val matcher = DIALOGUE_REGEX.matchEntire(line)
       if (matcher == null) {
         nonDialogueLines++
@@ -87,7 +66,7 @@ object FirstLineSmaller {
     }
 
     println("Found $convertedLines line(s) to convert. Continue? ")
-    if (!askYes()) {
+    if (!Utils.askYes()) {
       println("Oki, ignoring. Bai")
       return
     }
@@ -99,5 +78,4 @@ object FirstLineSmaller {
     println("Oki done. enjoy")
   }
 
-  private fun askYes(): Boolean = readLine()?.toLowerCase() == "y"
 }
