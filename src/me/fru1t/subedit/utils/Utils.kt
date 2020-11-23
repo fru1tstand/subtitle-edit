@@ -33,14 +33,7 @@ object Utils {
 
   /** Load the file contents into a list, one entry per line. */
   fun scanFile(file: File): List<String> {
-    val fileContents: ArrayList<String> = ArrayList()
-    val fileScanner = Scanner(file)
-    while (fileScanner.hasNextLine()) {
-      val line = fileScanner.nextLine()
-      println("Read $line")
-      fileContents.add(line)
-    }
-    fileScanner.close()
+    val fileContents =  file.readLines()
     return fileContents
   }
 
