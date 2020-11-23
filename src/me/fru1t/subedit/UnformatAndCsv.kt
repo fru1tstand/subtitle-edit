@@ -15,7 +15,7 @@ object UnformatAndCsv {
 
   /**
    * Console application that creates a CSV from a given .ass file in the following output:
-   * `line,starttime,endtime,style,line1,line2`
+   * `starttime,style,line1,line2`
    */
   fun run() {
     println("RUNNING: Unformat and CSV")
@@ -25,7 +25,7 @@ object UnformatAndCsv {
 
     var dialogueLine = 0
     val output = ArrayList<String>()
-    output.add("Line${DELIMITER}Start time${DELIMITER}End time${DELIMITER}Style${DELIMITER}Line1${DELIMITER}Line2")
+    output.add("Start time${DELIMITER}Style${DELIMITER}Line1${DELIMITER}Line2")
     for (lineNumber in fileContents.indices) {
       val line = fileContents[lineNumber]
       val matcher = DIALOGUE_REGEX.matchEntire(line) ?: continue
@@ -43,9 +43,8 @@ object UnformatAndCsv {
         text2 = text.substring(firstNewlinePosition + 2)
       }
 
-      output.add("$dialogueLine$DELIMITER" +
-          "${matcher.get(2)}$DELIMITER" +
-          "${matcher.get(3)}$DELIMITER" +
+      // 1: Layer, 2: Start, 3: End, 4: Style, 5: Name, 6: MarginL, 7: MarginR, 8: MarginV, 9: Effect, 10: Text
+      output.add("${matcher.get(2)}$DELIMITER" +
           "${matcher.get(4)}$DELIMITER" +
           "$text1$DELIMITER" +
           "$text2"
