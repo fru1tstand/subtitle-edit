@@ -61,13 +61,7 @@ object UnformatAndCsv {
       }
     }
 
-    csv.delete()
-    csv.createNewFile()
-    csv.writer().use {
-      output.forEach { line ->
-        it.write(line + "\r\n")
-      }
-    }
+    Utils.writeFile(csv, output)
 
     println("Oki done. enjoy")
   }

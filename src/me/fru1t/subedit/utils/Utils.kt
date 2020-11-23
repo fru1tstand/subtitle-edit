@@ -1,15 +1,14 @@
 package me.fru1t.subedit.utils
 
-import me.fru1t.subedit.FirstLineSmaller
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Yeah, it's bad practice. But who's gonna read this source anyway. Monolith for utilities that are used across
  * multiple tools.
  */
 object Utils {
+  private const val NEWLINE = "\r\n"
+
   /** Prompts the user for a file. Returns the file if valid or `null` if no file could be prodded from the user. */
   fun askForFile(): File? {
     println("File path?")
@@ -29,6 +28,20 @@ object Utils {
     }
 
     return file
+  }
+
+  /**
+   * Writes the given [contents] to the [file], overwriting without confirmation if the file already exists.
+   * Contents are encoded one line per element, using standard newline encoding.
+   */
+  fun writeFile(file: File, contents: List<String>) {
+    file.delete()
+    file.createNewFile()
+    file.writer().use { writer ->
+      contents.forEach { line ->
+        writer.write(line + NEWLINE)
+      }
+    }
   }
 
   fun askYes(): Boolean = readLine()?.toLowerCase() == "y"

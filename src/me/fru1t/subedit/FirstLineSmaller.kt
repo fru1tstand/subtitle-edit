@@ -73,9 +73,7 @@ object FirstLineSmaller {
       return
     }
 
-    file.delete()
-    file.createNewFile()
-    fileContents.forEach { line -> file.appendText(line + "\r\n") }
+    Utils.writeFile(file, fileContents)
 
     println("Oki done. enjoy")
   }
