@@ -31,11 +31,5 @@ object Utils {
     return file
   }
 
-  /** Load the file contents into a list, one entry per line. */
-  fun scanFile(file: File): List<String> {
-    val fileContents =  file.readLines()
-    return fileContents
-  }
-
   fun askYes(): Boolean = readLine()?.toLowerCase() == "y"
 }

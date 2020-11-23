@@ -22,7 +22,7 @@ object FirstLineSmaller {
     println("RUNNING: First line smaller")
 
     val file = Utils.askForFile() ?: return
-    val fileContents = ArrayList(Utils.scanFile(file))
+    val fileContents = ArrayList(file.readLines())
 
     var nonDialogueLines = 0
     var convertedLines = 0

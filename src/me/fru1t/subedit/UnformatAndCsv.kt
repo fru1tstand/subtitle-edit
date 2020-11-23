@@ -21,7 +21,7 @@ object UnformatAndCsv {
     println("RUNNING: Unformat and CSV")
 
     val file = Utils.askForFile() ?: return
-    val fileContents = ArrayList(Utils.scanFile(file))
+    val fileContents = ArrayList(file.readLines())
 
     var dialogueLine = 0
     val output = ArrayList<String>()
