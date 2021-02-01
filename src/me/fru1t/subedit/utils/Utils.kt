@@ -45,4 +45,13 @@ object Utils {
   }
 
   fun askYes(): Boolean = readLine()?.toLowerCase() == "y"
+  fun askForFontSize(): Int {
+    println("Font size?")
+    val size = readLine()?.toIntOrNull()
+    if (size == null) {
+      println("Invalid input...")
+      return askForFontSize()
+    }
+    return size
+  }
 }
