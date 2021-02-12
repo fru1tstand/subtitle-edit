@@ -45,4 +45,14 @@ object Utils {
   }
 
   fun askYes(): Boolean = readLine()?.toLowerCase() == "y"
+
+  fun askForInt(message: String): Int {
+    println(message)
+    val size = readLine()?.toIntOrNull()
+    if (size == null) {
+      println("Invalid input...")
+      return askForInt(message)
+    }
+    return size
+  }
 }

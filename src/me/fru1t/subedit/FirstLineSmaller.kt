@@ -7,7 +7,7 @@ import me.fru1t.subedit.utils.Utils
 object FirstLineSmaller {
   private val DIALOGUE_REGEX = Regex("^(Dialogue: [^,]+,[^,]+,[^,]+,[^,]+,[^,]*,\\d+,\\d+,\\d+,[^,]*,)(.*)\$")
   private const val NEWLINE = "\\N"
-  private const val FONT_WRAPPER_BEFORE = "{\\fs20}"
+  private const val FONT_WRAPPER_BEFORE_TEMPLATE = "{\\fs%d}"
   private const val FONT_WRAPPER_AFTER = "{\\fs}"
 
   /**
@@ -22,6 +22,8 @@ object FirstLineSmaller {
     println("RUNNING: First line smaller")
 
     val file = Utils.askForFile() ?: return
+
+    val fontSize = Utils.askForInt("Font size?")
     val fileContents = ArrayList(file.readLines())
 
     var nonDialogueLines = 0
@@ -36,23 +38,23 @@ object FirstLineSmaller {
       val matcher = DIALOGUE_REGEX.matchEntire(line)
       if (matcher == null) {
         nonDialogueLines++
-        continue;
+        continue
       }
       val firstNewline = matcher.groupValues[2].indexOf(NEWLINE)
       if (firstNewline == -1) {
         nonConvertedLines++
         println("Ignoring single line")
-        continue;
+        continue
       }
       if (matcher.groupValues[2][firstNewline - 1] == '}') {
         nonConvertedLines++
         println("Ignored already fonted line")
-        continue;
+        continue
       }
 
       fileContents[lineNumber] =
         matcher.groupValues[1] +
-            FONT_WRAPPER_BEFORE +
+            FONT_WRAPPER_BEFORE_TEMPLATE.format(fontSize) +
             matcher.groupValues[2].substring(0 until firstNewline) +
             FONT_WRAPPER_AFTER +
             NEWLINE +
