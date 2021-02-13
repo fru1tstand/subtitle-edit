@@ -6,7 +6,6 @@ import java.io.File
 
 /** Monolith for the UnformatAndCsv tool. */
 object UnformatAndCsv {
-  // 1: Layer, 2: Start, 3: End, 4: Style, 5: Name, 6: MarginL, 7: MarginR, 8: MarginV, 9: Effect, 10: Text
   private val FORMATTING_STRING = Regex("\\{[^{]+}")
   private const val CSV_EXTENSION = ".csv"
   private const val DELIMITER = "\t"
