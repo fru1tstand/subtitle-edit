@@ -107,11 +107,12 @@ object Utils {
 
   fun askForColor(): String? {
     val color = readLine() ?: return null
-    if (!color.matches(COLOR_REGEX)) {
-      println("Invalid input...")
-      return askForColor()
+    if (color.matches(COLOR_REGEX)) {
+      return color
     }
-    return color
+    if (color == "") return null
+    println("Invalid input...")
+    return askForColor()
   }
 
   fun askForAlpha(): String? {

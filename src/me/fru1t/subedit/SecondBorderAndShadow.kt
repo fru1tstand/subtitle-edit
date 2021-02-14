@@ -22,17 +22,23 @@ object SecondBorderAndShadow {
     println("Target file")
     val outFile = Utils.askForOutputFile() ?: return
 
-    println("Second border size? (First border width + second border width)")
-    val borderSize = Utils.askForInt()
+    println("First border size?")
+    val borderSize1 = Utils.askForInt()
 
-    println("Second border color? (in BBGGRR format)")
-    val borderColor = Utils.askForColor() ?: return
+    println("First border color? (in BBGGRR format) (default: the border color of the style)")
+    val borderColor1 = Utils.askForColor()
+
+    println("Second border size? (First border width + second border width)")
+    val borderSize2 = Utils.askForInt()
+
+    println("Second border color? (in BBGGRR format) (default: the border color of the style)")
+    val borderColor2 = Utils.askForColor()
 
     println("Shadow size?")
     val shadowSize = Utils.askForInt()
 
-    println("Shadow color? (in hexadecimal BBGGRR format)")
-    val shadowColor = Utils.askForColor() ?: return
+    println("Shadow color? (in hexadecimal BBGGRR format) (default: the border color of the style)")
+    val shadowColor = Utils.askForColor()
 
     println("Shadow alpha? (in hexadecimal AA format. 00 = fully opaque)")
     val shadowAlpha = Utils.askForAlpha() ?: return
@@ -41,10 +47,13 @@ object SecondBorderAndShadow {
     val shadowBlur = Utils.askForInt()
 
     val prefixForEachLayer = listOf(
-            BORDER_ALPHA_CODE_TEMPLATE.format(shadowAlpha) + BORDER_COLOR_CODE_TEMPLATE.format(shadowColor)
+            BORDER_ALPHA_CODE_TEMPLATE.format(shadowAlpha)
+                    + if (shadowColor == null) "" else  BORDER_COLOR_CODE_TEMPLATE.format(shadowColor)
                     + BORDER_SIZE_CODE_TEMPLATE.format(shadowSize) + BLUR_CODE_TEMPLATE.format(shadowBlur),
-            BORDER_COLOR_CODE_TEMPLATE.format(borderColor) + BORDER_SIZE_CODE_TEMPLATE.format(borderSize),
-            ""
+            (if (borderColor2 == null) "" else BORDER_COLOR_CODE_TEMPLATE.format(borderColor2))
+                    + BORDER_SIZE_CODE_TEMPLATE.format(borderSize2),
+            (if (borderColor1 == null) "" else BORDER_COLOR_CODE_TEMPLATE.format(borderColor1))
+                    + BORDER_SIZE_CODE_TEMPLATE.format(borderSize1)
     )
 
     inFile.useLines { sourceLines ->
