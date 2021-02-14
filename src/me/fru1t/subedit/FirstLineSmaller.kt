@@ -23,8 +23,9 @@ object FirstLineSmaller {
     val inFile = Utils.askForSourceFile() ?: return
     println("Target file")
     val outFile = Utils.askForOutputFile() ?: return
+    println("Font size?")
+    val fontSize = Utils.askForInt()
 
-    val fontSize = Utils.askForInt("Font size?")
     inFile.useLines { sourceLines ->
       val transformed = Utils.assFlatMap(sourceLines) {
         sequence {
