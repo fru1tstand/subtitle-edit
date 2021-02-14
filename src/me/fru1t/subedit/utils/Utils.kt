@@ -7,9 +7,9 @@ import java.io.File
  * multiple tools.
  */
 object Utils {
-  public const val SUB_NEWLINE = "\\N"
-
   private val DIALOGUE_REGEX = Regex("^Dialogue: ([^,]+),([^,]+),([^,]+),([^,]+),([^,]*),(\\d+),(\\d+),(\\d+),([^,]*),(.*)\$")
+  private val COLOR_REGEX = Regex("[0-9A-F]{6}")
+  private val ALPHA_REGEX = Regex("[0-9A-F]{2}")
 
   /** Prompts the user for a file to read from.
    * Returns the file if valid or `null` if no file could be prodded from the user. */
@@ -101,5 +101,23 @@ object Utils {
       val dialogue = Dialogue.fromList(matcher.groupValues.drop(1))  // drop the first which is the entire string
       yield(dialogue)
     }
+  }
+
+  fun askForColor(): String? {
+    val color = readLine() ?: return null
+    if (!color.matches(COLOR_REGEX)) {
+      println("Invalid input...")
+      return askForColor()
+    }
+    return color
+  }
+
+  fun askForAlpha(): String? {
+    val alpha = readLine() ?: return null
+    if (!alpha.matches(ALPHA_REGEX)) {
+      println("Invalid input...")
+      return askForAlpha()
+    }
+    return alpha
   }
 }
