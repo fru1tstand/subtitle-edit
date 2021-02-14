@@ -7,6 +7,8 @@ import java.io.File
  * multiple tools.
  */
 object Utils {
+  public const val SUB_NEWLINE = "\\N"
+
   private val DIALOGUE_REGEX = Regex("^Dialogue: ([^,]+),([^,]+),([^,]+),([^,]+),([^,]*),(\\d+),(\\d+),(\\d+),([^,]*),(.*)\$")
   private val COLOR_REGEX = Regex("[0-9A-F]{6}")
   private val ALPHA_REGEX = Regex("[0-9A-F]{2}")
