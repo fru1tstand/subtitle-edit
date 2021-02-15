@@ -13,7 +13,8 @@ object Utils {
   private val COLOR_REGEX = Regex("[0-9A-F]{6}")
   private val ALPHA_REGEX = Regex("[0-9A-F]{2}")
 
-  /** Prompts the user for a file to read from.
+  /**
+   * Prompts the user for a file to read from.
    * Returns the file if valid or `null` if no file could be prodded from the user. */
   fun askForSourceFile(): File? {
     println("File path?")
@@ -35,7 +36,8 @@ object Utils {
     return file
   }
 
-  /** Prompts the user for a file to output to.
+  /**
+   * Prompts the user for a file to output to.
    * Returns the file if valid or `null` if no file could be prodded from the user. */
   fun askForOutputFile(): File? {
     println("File path?")

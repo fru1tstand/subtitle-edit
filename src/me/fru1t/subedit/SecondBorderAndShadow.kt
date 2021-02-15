@@ -1,6 +1,11 @@
 package me.fru1t.subedit
 
+import me.fru1t.subedit.utils.AssFile.transformDialogue
 import me.fru1t.subedit.utils.Utils
+
+fun main() {
+  SecondBorderAndShadow.run()
+}
 
 /** Monolith for the SecondBorderAndShadow tool. */
 object SecondBorderAndShadow {
@@ -10,7 +15,8 @@ object SecondBorderAndShadow {
   private const val BORDER_ALPHA_CODE_TEMPLATE = "{\\3a&H%s&}"
 
   /**
-   * Console application that turns adds a 2nd border and blurred shadow to each subtitle.
+   * Console application that adds a border and blurred shadow to each subtitle,
+   * generating 2 additional subtitle lines per input line.
    * This method is self-contained to accept input via CLI.
    */
   fun run() {
@@ -48,26 +54,23 @@ object SecondBorderAndShadow {
 
     val prefixForEachLayer = listOf(
             BORDER_ALPHA_CODE_TEMPLATE.format(shadowAlpha)
-                    + if (shadowColor == null) "" else  BORDER_COLOR_CODE_TEMPLATE.format(shadowColor)
-                    + BORDER_SIZE_CODE_TEMPLATE.format(shadowSize) + BLUR_CODE_TEMPLATE.format(shadowBlur),
-            (if (borderColor2 == null) "" else BORDER_COLOR_CODE_TEMPLATE.format(borderColor2))
+                    + (shadowColor?.let { BORDER_COLOR_CODE_TEMPLATE.format(it) } ?: "")
+                    + BORDER_SIZE_CODE_TEMPLATE.format(shadowSize)
+                    + BLUR_CODE_TEMPLATE.format(shadowBlur),
+            (borderColor2?.let { BORDER_COLOR_CODE_TEMPLATE.format(it) } ?: "")
                     + BORDER_SIZE_CODE_TEMPLATE.format(borderSize2),
-            (if (borderColor1 == null) "" else BORDER_COLOR_CODE_TEMPLATE.format(borderColor1))
+            (borderColor1?.let { BORDER_COLOR_CODE_TEMPLATE.format(it) } ?: "")
                     + BORDER_SIZE_CODE_TEMPLATE.format(borderSize1)
     )
 
-    inFile.useLines { sourceLines ->
-      val transformed = Utils.assFlatMap(sourceLines) { dialogue ->
-        sequence {
-          for ((index, prefix) in prefixForEachLayer.withIndex()) {
-            val newDlg = dialogue.copy(text = prefix + dialogue.text, layer = (dialogue.layer.toInt() + index).toString())
-            yield(newDlg)
-          }
+    transformDialogue(inFile, outFile) { dialogue ->
+      sequence {
+        for ((index, prefix) in prefixForEachLayer.withIndex()) {
+          yield(dialogue.copy(text = prefix + dialogue.text, layer = (dialogue.layer.toInt() + index).toString()))
         }
       }
-
-      Utils.writeFile(outFile, transformed)
     }
+
     println("Oki done. enjoy")
   }
 }

@@ -1,5 +1,6 @@
 package me.fru1t.subedit
 
+import me.fru1t.subedit.utils.AssFile
 import me.fru1t.subedit.utils.Utils
 
 
@@ -26,32 +27,31 @@ object FirstLineSmaller {
     println("Font size?")
     val fontSize = Utils.askForInt()
 
-    inFile.useLines { sourceLines ->
-      val transformed = Utils.assFlatMap(sourceLines) {
-        sequence {
-          val text = it.text
-          val firstNewline = text.indexOf(Utils.SUB_NEWLINE)
-          if (firstNewline == -1) {
-            println("Ignoring single line")
-            yield(it)
-          } else if (firstNewline > 0 && text[firstNewline - 1] == '}') {
-            println("Ignored already fonted line")
-            yield(it)
-          } else {
-            val firstLine = text.substring(0 until firstNewline)
-            val rest = text.substring(firstNewline + Utils.SUB_NEWLINE.length)
-
-            val newFirstLine = FONT_WRAPPER_BEFORE_TEMPLATE.format(fontSize) + firstLine + FONT_WRAPPER_AFTER
-            val diag = it.copy(text = newFirstLine + Utils.SUB_NEWLINE + rest)
-            yield(diag)
-          }
+    AssFile.transformDialogue(inFile, outFile) { dialogue ->
+      sequence {
+        val text = dialogue.text
+        val firstNewline = text.indexOf(Utils.SUB_NEWLINE)
+        if (firstNewline == -1) {
+          println("Ignoring single line")
+          yield(dialogue)
+          return@sequence
         }
+
+        if (firstNewline > 0 && text[firstNewline - 1] == '}') {
+          println("Ignored already fonted line")
+          yield(dialogue)
+          return@sequence
+        }
+
+        val firstLine = text.substring(0 until firstNewline)
+        val rest = text.substring(firstNewline + Utils.SUB_NEWLINE.length)
+
+        val newFirstLine = FONT_WRAPPER_BEFORE_TEMPLATE.format(fontSize) + firstLine + FONT_WRAPPER_AFTER
+        yield(dialogue.copy(text = newFirstLine + Utils.SUB_NEWLINE + rest))
       }
-
-      Utils.writeFile(outFile, transformed)
-
-      println("Oki done. enjoy")
     }
+
+    println("Oki done. enjoy")
   }
 
 }

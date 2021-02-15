@@ -57,6 +57,4 @@ object UnformatAndCsv {
 
     println("Oki done. enjoy")
   }
-
-//  fun MatchResult.get(group: Int): String = groupValues[group].replace("\"", "\"\"")
 }
