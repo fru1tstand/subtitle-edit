@@ -1,12 +1,11 @@
 package me.fru1t.subedit
 
+import me.fru1t.subedit.utils.AssFile
 import me.fru1t.subedit.utils.Utils
 
 
 /** Monolith for the FirstLineSmaller tool. */
 object FirstLineSmaller {
-  private val DIALOGUE_REGEX = Regex("^(Dialogue: [^,]+,[^,]+,[^,]+,[^,]+,[^,]*,\\d+,\\d+,\\d+,[^,]*,)(.*)\$")
-  private const val NEWLINE = "\\N"
   private const val FONT_WRAPPER_BEFORE_TEMPLATE = "{\\fs%d}"
   private const val FONT_WRAPPER_AFTER = "{\\fs}"
 
@@ -21,60 +20,36 @@ object FirstLineSmaller {
   fun run() {
     println("RUNNING: First line smaller")
 
-    val file = Utils.askForFile() ?: return
-    val fontSize = Utils.askForInt("Font size?")
-    val fileContents = ArrayList(file.readLines())
+    println("Source file")
+    val inFile = Utils.askForSourceFile() ?: return
+    println("Target file")
+    val outFile = Utils.askForOutputFile() ?: return
+    println("Font size?")
+    val fontSize = Utils.askForInt()
 
-    var nonDialogueLines = 0
-    var convertedLines = 0
-    var nonConvertedLines = 0
-    for (lineNumber in fileContents.indices) {
-      val line = fileContents[lineNumber]
-      println(
-        "[$lineNumber/${fileContents.size}] Non Dialogue: $nonDialogueLines; " +
-            "Converted: $convertedLines; NonConverted: $nonConvertedLines; - $line")
+    AssFile.transformDialogue(inFile, outFile) { dialogue ->
+      sequence {
+        val text = dialogue.text
+        val firstNewline = text.indexOf(Utils.SUB_NEWLINE)
+        if (firstNewline == -1) {
+          println("Ignoring single line")
+          yield(dialogue)
+          return@sequence
+        }
 
-      val matcher = DIALOGUE_REGEX.matchEntire(line)
-      if (matcher == null) {
-        nonDialogueLines++
-        continue
+        if (firstNewline > 0 && text[firstNewline - 1] == '}') {
+          println("Ignored already fonted line")
+          yield(dialogue)
+          return@sequence
+        }
+
+        val firstLine = text.substring(0 until firstNewline)
+        val rest = text.substring(firstNewline + Utils.SUB_NEWLINE.length)
+
+        val newFirstLine = FONT_WRAPPER_BEFORE_TEMPLATE.format(fontSize) + firstLine + FONT_WRAPPER_AFTER
+        yield(dialogue.copy(text = newFirstLine + Utils.SUB_NEWLINE + rest))
       }
-      val firstNewline = matcher.groupValues[2].indexOf(NEWLINE)
-      if (firstNewline == -1) {
-        nonConvertedLines++
-        println("Ignoring single line")
-        continue
-      }
-      if (matcher.groupValues[2][firstNewline - 1] == '}') {
-        nonConvertedLines++
-        println("Ignored already fonted line")
-        continue
-      }
-
-      fileContents[lineNumber] =
-        matcher.groupValues[1] +
-            FONT_WRAPPER_BEFORE_TEMPLATE.format(fontSize) +
-            matcher.groupValues[2].substring(0 until firstNewline) +
-            FONT_WRAPPER_AFTER +
-            NEWLINE +
-            matcher.groupValues[2].substring(firstNewline + 2)
-      convertedLines++
     }
-
-    println("[final] Non Dialogue: $nonDialogueLines; Converted: $convertedLines; NonConverted: $nonConvertedLines")
-
-    if (convertedLines == 0) {
-      println("Nothing to do here. bai")
-      return
-    }
-
-    println("Found $convertedLines line(s) to convert. Continue? ")
-    if (!Utils.askYes()) {
-      println("Oki, ignoring. Bai")
-      return
-    }
-
-    Utils.writeFile(file, fileContents)
 
     println("Oki done. enjoy")
   }

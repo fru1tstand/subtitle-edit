@@ -8,7 +8,7 @@ import java.util.Scanner;
  * Main method entrypoint for Subtitle Edit Tools.
  */
 public class SubEdit {
-  private static final String PROGRAMS_OUTPUT = "a: FirstLineSmaller; b: UnformatAndCsv";
+  private static final String PROGRAMS_OUTPUT = "a: FirstLineSmaller; b: UnformatAndCsv; c: SecondBorderAndShadow";
 
   public static void main(String[] args) throws IOException {
     String programToRun;
@@ -24,16 +24,13 @@ public class SubEdit {
     }
 
     switch (programToRun) {
-      case "a":
-        FirstLineSmaller.INSTANCE.run();
-        break;
-      case "b":
-        UnformatAndCsv.INSTANCE.run();
-        break;
-      default:
+      case "a" -> FirstLineSmaller.INSTANCE.run();
+      case "b" -> UnformatAndCsv.INSTANCE.run();
+      case "c" -> SecondBorderAndShadow.INSTANCE.run();
+      default -> {
         System.out.println("Sorry, I couldn't understand <" + programToRun + ">. Please choose from the following:");
         System.out.println(PROGRAMS_OUTPUT);
-        break;
+      }
     }
   }
 }
