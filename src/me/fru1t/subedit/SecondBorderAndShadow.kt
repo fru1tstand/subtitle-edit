@@ -3,9 +3,6 @@ package me.fru1t.subedit
 import me.fru1t.subedit.utils.AssFile.transformDialogue
 import me.fru1t.subedit.utils.Utils
 
-fun main() {
-  SecondBorderAndShadow.run()
-}
 
 /** Monolith for the SecondBorderAndShadow tool. */
 object SecondBorderAndShadow {
